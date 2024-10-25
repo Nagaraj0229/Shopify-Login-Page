@@ -1,0 +1,188 @@
+<!-- Include intl-tel-input CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
+<!-- Phone Number Login Form -->
+<div class="phone-login-container">
+  <h2 class="login-title">Login with OTP</h2>
+
+  <form id="otp-login-form" class="otp-form" onsubmit="sendOtp(event)">
+    <label for="phone-number" class="input-label">WhatsApp Number</label>
+
+    <input 
+      type="tel" 
+      id="phone-number" 
+      name="phone" 
+      placeholder="Enter your WhatsApp number" 
+      required 
+      class="input-field"
+    />
+
+    <button type="submit" class="otp-button">Send WhatsApp OTP</button>
+
+    <!-- OTP Sending Status Message -->
+    <p id="otp-status" class="status-message"></p> <!-- Status message -->
+  </form>
+
+  <form id="otp-verify-form" class="otp-form" onsubmit="verifyOtp(event)" style="display:none;">
+    <label for="otp" class="input-label">Enter OTP</label>
+    <input 
+      type="text" 
+      id="otp" 
+      name="otp" 
+      placeholder="Enter the OTP" 
+      required 
+      class="input-field" 
+    />
+    <button type="submit" class="otp-button">Verify OTP</button>
+  </form>
+
+  <p id="status-message" class="status-message"></p>
+</div>
+
+<!-- Include intl-tel-input JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+<!-- JavaScript to Initialize intl-tel-input -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.querySelector("#phone-number");
+    const iti = intlTelInput(phoneInput, {
+      initialCountry: "auto",
+      geoIpLookup: function (callback) {
+        fetch('https://ipinfo.io/json?token=your_token') 
+          .then((response) => response.json())
+          .then((data) => callback(data.country))
+          .catch(() => callback("US"));
+      },
+      separateDialCode: true, 
+    });
+
+    phoneInput.addEventListener("blur", function () {
+      const statusMessage = document.getElementById("status-message");
+      if (iti.isValidNumber()) {
+        statusMessage.textContent = "Valid number!";
+        statusMessage.style.color = "green";
+      } else {
+        statusMessage.textContent = "Invalid number.";
+        statusMessage.style.color = "red";
+      }
+    });
+  });
+
+  function sendOtp(event) {
+    event.preventDefault();
+    
+    const otpStatus = document.getElementById("otp-status");
+    otpStatus.textContent = "Sending OTP..."; 
+    otpStatus.style.color = "blue";
+
+    setTimeout(function () {
+      otpStatus.textContent = "OTP sent via WhatsApp!";
+      otpStatus.style.color = "green";
+      
+      document.getElementById("otp-login-form").style.display = "none";
+      document.getElementById("otp-verify-form").style.display = "block";
+    }, 2000); 
+  }
+
+  function verifyOtp(event) {
+  event.preventDefault();
+
+  const otp = document.getElementById("otp").value;
+
+  if (otp === "123456") {  
+    const statusMessage = document.getElementById("status-message");
+    statusMessage.textContent = "OTP verified successfully!";
+    statusMessage.style.color = "green"; 
+  } else {
+    const statusMessage = document.getElementById("status-message");
+    statusMessage.textContent = "Invalid OTP. Please try again.";
+    statusMessage.style.color = "red"; 
+  }
+}
+</script>
+
+<!-- Improved CSS Styling for Proper Spacing -->
+<style>
+/* General Styling */
+.phone-login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Title Styling */
+.login-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Input Fields and Button Spacing */
+.input-label {
+  display: block;
+  text-align: left;
+  margin: 10px 0 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.input-field {
+  width: 100%; /* This ensures the field takes up the full width of the container */
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border 0.3s ease;
+  min-width: 280px; /* Set a minimum width to avoid truncating the placeholder */
+}
+
+.iti__flag-container {
+  margin-right: 5px; /* Adding some space between the flag and input text */
+}
+
+.otp-form {
+  width: 100%;
+  max-width: 400px; /* Ensure the form container is wide enough */
+  margin: auto;
+}
+
+.input-field:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+/* Buttons */
+.otp-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px; /* Add spacing above the button */
+  background-color: black;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.otp-button:hover {
+  background-color: #333;
+}
+
+/* Status Message */
+.status-message {
+  margin-top: 15px;
+  font-weight: bold;
+}
+</style>
