@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Create Account</title>
+
+    <!-- intl-tel-input CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+    />
+
+    <!-- SweetAlert2 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+
+    <!-- Styles Starts -->
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Styles ends -->
+  </head>
+
+  <body>
+    <div class="login-container">
+      <!-- Login Form starts -->
+      <form id="otp-login-form" onsubmit="checkCustomerExists(event)">
+        <header class="login__header">
+          <h1 class="login__heading" id="form-heading">Login With OTP</h1>
+        </header>
+        <label for="phone-number" class="title"
+          >Enter Your WhatsApp Number</label
+        >
+        <div class="login_input_btn">
+          <input
+            type="number"
+            id="phone-number"
+            autocomplete="tel"
+            oninput="alertMessageDisable()"
+            required
+          />
+          <button id="retry" onclick="checkCustomerExists(event)">
+            <svg
+              width="19"
+              height="18"
+              viewBox="0 0 19 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11 3.75L16.25 9M16.25 9L11 14.25M16.25 9L2.75 9"
+                stroke="#000"
+                fill="green"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <button id="close" onclick="handleClear()">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.75684 16.243L16.2428 7.75696M16.2428 16.243L7.75684 7.75696"
+                stroke="black"
+                stroke-width="1.5"
+                stroke-miterlimit="10"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <button
+          type="submit"
+          class="btn btn_loader"
+          id="login_btn"
+          title="WhatsApp icons created by Freepik - Flaticon"
+        >
+          <span class="loader" id="loader"></span>
+          <p id="loader-text">Login With WhatsApp</p>
+        </button>
+        <div class="signup">
+          <p id="otp-status"></p>
+          <span id="create_account" onclick="handleButtonClick()"
+            >Create account</span
+          >
+        </div>
+      </form>
+      <!-- Login Form ends -->
+
+      <!-- OTP Verification Form starts -->
+
+      <form
+        id="otp-verify-form"
+        onsubmit="verifyOtp(event)"
+        class="otp-section"
+      >
+        <header class="login__header">
+          <h1 class="login__heading" id="form-heading">Verify OTP</h1>
+          <div id="whatsapp-number-verify">
+            You have received the 6 Digits OTP on your WhatsApp number
+            <span
+              id="phoneNumberSpan"
+              style="color: #000000; font-weight: 600"
+            ></span>
+          </div>
+        </header>
+        <label for="otp">Enter OTP</label>
+        <input
+          type="number"
+          id="otp"
+          min="0"
+          max="999999"
+          required
+          oninput="this.value = this.value.slice(0, 6);"
+          onkeyup="otpValidation()"
+        />
+
+        <div id="otp-timer" style="color: blue; text-align: end"></div>
+        <span
+          id="resend-otp-button"
+          style="
+            cursor: pointer;
+            text-decoration: underline;
+            color: blue;
+            background-color: transparent;
+            text-align: end;
+            display: none;
+          "
+          onclick="ResendOTP(event)"
+        >
+          Resend OTP
+        </span>
+
+        <button type="submit" class="btn btn_loader" id="verifyBtn" disabled>
+          <span class="loader" id="verifyLoader"></span>
+          <p id="verifyLoaderText">Verify OTP</p>
+        </button>
+
+        <div id="otp-status-verify" class="status-message"></div>
+      </form>
+      <!-- OTP Verification Form ends -->
+
+      <!-- Create Account Form starts -->
+      <form
+        id="create-account-form"
+        class="create-account-section"
+        onsubmit="createAccount(event)"
+      >
+        <header class="login__header">
+          <h1 class="login__heading" id="form-heading">Create Account</h1>
+        </header>
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" required />
+
+        <label for="last-name">Last Name</label>
+        <input type="text" id="last-name" required />
+
+        <label for="email-address">Email Address</label>
+        <input type="email" id="email-address" required />
+
+        <label for="whatsapp-number">WhatsApp Number</label>
+        <input type="text" id="whatsapp-number" autocomplete="tel" />
+        <div class="otp_info">
+          You will receive the WhatsApp OTP on this number
+        </div>
+
+        <button type="submit" class="btn" id="create_btn">
+          <span class="loader" id="createLoader"></span>
+          <p id="createLoader-text">Create Account</p>
+        </button>
+        <div id="create-account-status" class="status-message"></div>
+      </form>
+
+      <!-- Create Account Form ends -->
+    </div>
+
+    <!-- Script starts -->
+
+    <!-- intl-tel-input JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="index.js"></script>
+
+    <!-- Script ends -->
+  </body>
+</html>
